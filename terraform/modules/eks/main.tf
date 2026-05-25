@@ -3,7 +3,7 @@ data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
 resource "aws_kms_key" "eks" {
-  description             = "${var.env} EKS — secrets and EBS encryption"
+  description             = "${var.env} EKS secrets and EBS encryption"
   deletion_window_in_days = 7
   enable_key_rotation     = true
 
@@ -20,18 +20,33 @@ resource "aws_kms_key" "eks" {
         Resource = "*"
       },
       {
-        Sid    = "Allow EBS service"
+        Sid    = "Allow AutoScaling service-linked role to use key for EBS"
         Effect = "Allow"
         Principal = {
-          Service = "ec2.amazonaws.com"
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
         }
         Action = [
+          "kms:Encrypt",
           "kms:Decrypt",
-          "kms:GenerateDataKeyWithoutPlaintext",
-          "kms:CreateGrant",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
           "kms:DescribeKey",
         ]
         Resource = "*"
+      },
+      {
+        Sid    = "Allow AutoScaling to create grants for encrypted volumes"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+        Action   = "kms:CreateGrant"
+        Resource = "*"
+        Condition = {
+          Bool = {
+            "kms:GrantIsForAWSResource" = "true"
+          }
+        }
       },
     ]
   })
