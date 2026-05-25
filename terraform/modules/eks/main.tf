@@ -46,7 +46,7 @@ resource "aws_kms_alias" "eks" {
 
 resource "aws_security_group" "cluster_extra" {
   name        = "${var.env}-eks-cluster-extra-sg"
-  description = "Additional EKS cluster SG — allows bastion/peered VPC to reach API"
+  description = "Additional EKS cluster SG - allows bastion/peered VPC to reach API"
   vpc_id      = var.vpc_id
 
   ingress {

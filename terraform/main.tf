@@ -36,7 +36,7 @@ resource "aws_route53_zone" "private" {
 
 resource "aws_security_group" "db" {
   name        = "${var.env}-roboshop-db-sg"
-  description = "RoboShop DB tier — MySQL, MongoDB, Valkey, RabbitMQ"
+  description = "RoboShop DB tier - MySQL, MongoDB, Valkey, RabbitMQ"
   vpc_id      = local.vpc.vpc_id
 
   ingress {
