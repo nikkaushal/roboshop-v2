@@ -66,14 +66,16 @@ resource "helm_release" "traefik" {
           "service.beta.kubernetes.io/aws-load-balancer-scheme" = "internet-facing"
         }
       }
+      providers = {
+        kubernetesIngress = {
+          publishedService = {
+            enabled = true
+          }
+        }
+      }
       ingressRoute = {
         dashboard = { enabled = true }
       }
-      additionalArguments = [
-        "--certificatesresolvers.letsencrypt.acme.email=admin@${var.dns_domain}",
-        "--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json",
-        "--certificatesresolvers.letsencrypt.acme.tlschallenge=true",
-      ]
     })
   ]
 
@@ -95,12 +97,11 @@ resource "helm_release" "argocd" {
       server = {
         extraArgs = ["--insecure"]
         ingress = {
-          enabled           = true
-          ingressClassName  = "traefik"
-          hosts             = ["argocd-${var.env}.${var.dns_domain}"]
+          enabled          = true
+          ingressClassName = "traefik"
+          hostname         = "argocd-${var.env}.${var.dns_domain}"
           annotations = {
-            "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
-            "traefik.ingress.kubernetes.io/router.tls"         = "true"
+            "traefik.ingress.kubernetes.io/router.entrypoints" = "web"
           }
         }
       }
