@@ -96,10 +96,16 @@ resource "helm_release" "argocd" {
     yamlencode({
       server = {
         extraArgs = ["--insecure"]
+        # Force HTTP (port 80) on the service so Traefik doesn't get an unexpected TLS handshake
+        service = {
+          servicePortHttps = 443
+          servicePortHttp  = 80
+        }
         ingress = {
           enabled          = true
           ingressClassName = "traefik"
           hostname         = "argocd-${var.env}.${var.dns_domain}"
+          servicePort      = "http"
           annotations = {
             "traefik.ingress.kubernetes.io/router.entrypoints" = "web"
           }
