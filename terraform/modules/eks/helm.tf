@@ -48,6 +48,8 @@ resource "helm_release" "cluster_autoscaler" {
 }
 
 # ── Traefik Ingress Controller ────────────────────────────────────────────────
+# TLS is terminated at the AWS NLB using an ACM certificate.
+# Traefik speaks plain HTTP to the backends and handles HTTP→HTTPS redirect.
 
 resource "helm_release" "traefik" {
   name             = "traefik"
@@ -57,27 +59,9 @@ resource "helm_release" "traefik" {
   create_namespace = true
   version          = "30.1.0"
 
-  values = [
-    yamlencode({
-      service = {
-        type = "LoadBalancer"
-        annotations = {
-          "service.beta.kubernetes.io/aws-load-balancer-type"   = "nlb"
-          "service.beta.kubernetes.io/aws-load-balancer-scheme" = "internet-facing"
-        }
-      }
-      providers = {
-        kubernetesIngress = {
-          publishedService = {
-            enabled = true
-          }
-        }
-      }
-      ingressRoute = {
-        dashboard = { enabled = true }
-      }
-    })
-  ]
+  values = [templatefile("${path.module}/traefik.yml", {
+    acm_certificate_arn = var.acm_certificate_arn
+  })]
 
   depends_on = [null_resource.kubeconfig, helm_release.cluster_autoscaler]
 }
@@ -94,21 +78,18 @@ resource "helm_release" "argocd" {
 
   values = [
     yamlencode({
-      server = {
-        extraArgs = ["--insecure"]
-        # Force HTTP (port 80) on the service so Traefik doesn't get an unexpected TLS handshake
-        service = {
-          servicePortHttps = 443
-          servicePortHttp  = 80
+      configs = {
+        params = {
+          "server.insecure" = true
         }
+      }
+      global = {
+        domain = "argocd-${var.env}.${var.dns_domain}"
+      }
+      server = {
         ingress = {
           enabled          = true
           ingressClassName = "traefik"
-          hostname         = "argocd-${var.env}.${var.dns_domain}"
-          servicePort      = "http"
-          annotations = {
-            "traefik.ingress.kubernetes.io/router.entrypoints" = "web"
-          }
         }
       }
     })

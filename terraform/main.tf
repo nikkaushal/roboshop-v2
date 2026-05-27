@@ -125,6 +125,7 @@ module "eks" {
   node_min_size           = var.node_min_size
   node_max_size           = var.node_max_size
   node_capacity_type      = var.node_capacity_type
+  acm_certificate_arn     = var.acm_certificate_arn
   dns_domain              = var.dns_domain
   dns_zone_id             = var.dns_zone_id
   tags                    = var.tags

@@ -63,6 +63,11 @@ variable "node_capacity_type" {
   default = "SPOT"
 }
 
+variable "acm_certificate_arn" {
+  type        = string
+  description = "ACM certificate ARN for NLB TLS termination (must cover dns_domain)"
+}
+
 variable "dns_domain" {
   type        = string
   description = "Public domain for ingress (e.g. tek-nik.com)"

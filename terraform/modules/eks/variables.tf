@@ -49,6 +49,11 @@ variable "dns_zone_id" {
   type = string
 }
 
+variable "acm_certificate_arn" {
+  type        = string
+  description = "ACM certificate ARN attached to the NLB for TLS termination"
+}
+
 variable "tags" {
   type    = map(string)
   default = {}

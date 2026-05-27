@@ -30,8 +30,9 @@ node_min_size       = 1
 node_max_size       = 3
 node_capacity_type  = "SPOT"
 
-dns_domain  = "tek-nik.com"
-dns_zone_id = "Z02807011OH2QBU9LL0MC"
+acm_certificate_arn = "arn:aws:acm:us-east-1:293222827824:certificate/9a14b239-9298-45a6-ab49-9a61b9e675a7"
+dns_domain          = "tek-nik.com"
+dns_zone_id         = "Z02807011OH2QBU9LL0MC"
 
 db_instances = {
   mysql = {
