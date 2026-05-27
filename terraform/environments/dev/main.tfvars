@@ -7,7 +7,7 @@ ec2_password = "DevOps321"
 
 ansible_repo_url = "https://github.com/nikkaushal/roboshop-v1.git"
 
-# 10.20.0.0/24 — non-overlapping with prd (10.30.0.0/24)
+# dev VPC: 10.20.0.0/24
 network = {
   dev = {
     vpc_cidr = "10.20.0.0/24"

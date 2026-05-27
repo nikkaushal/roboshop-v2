@@ -1,4 +1,4 @@
-ENV ?= prd
+ENV ?= dev
 
 init:
 	git pull
