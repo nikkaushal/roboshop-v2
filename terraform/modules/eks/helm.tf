@@ -90,6 +90,10 @@ resource "helm_release" "argocd" {
         ingress = {
           enabled          = true
           ingressClassName = "traefik"
+          annotations = {
+            # Register route on both entrypoints — web redirects to websecure via Traefik redirect rule
+            "traefik.ingress.kubernetes.io/router.entrypoints" = "web,websecure"
+          }
         }
       }
     })

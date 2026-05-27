@@ -3,7 +3,7 @@ service:
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
-    # ACM certificate — TLS terminated at NLB, backend speaks plain HTTP to Traefik
+    # ACM certificate — TLS terminated at NLB, Traefik receives plain HTTP
     service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "${acm_certificate_arn}"
     service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
@@ -15,9 +15,9 @@ ports:
   websecure:
     port: 8000
     exposedPort: 443
-    http:
-      tls:
-        enabled: false
+    # Traefik v3: TLS disabled — NLB terminates TLS, Traefik receives plain HTTP
+    tls:
+      enabled: false
 
 additionalArguments:
   - "--accesslog=true"
@@ -25,7 +25,7 @@ additionalArguments:
   - "--api.insecure=true"
   - "--entrypoints.web.forwardedHeaders.insecure=true"
   - "--entrypoints.websecure.forwardedHeaders.insecure=true"
-  # Redirect HTTP -> HTTPS at Traefik level
+  # Redirect HTTP -> HTTPS
   - "--entrypoints.web.http.redirections.entrypoint.to=:443"
   - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
 
@@ -33,6 +33,10 @@ providers:
   kubernetesIngress:
     publishedService:
       enabled: true
+    # Traefik v3: must explicitly list entrypoints — defaults to web only
+    entryPoints:
+      - web
+      - websecure
 
 ingressRoute:
   dashboard:
