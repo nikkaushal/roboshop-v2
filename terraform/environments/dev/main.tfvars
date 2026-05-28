@@ -7,14 +7,15 @@ ec2_password = "DevOps321"
 
 ansible_repo_url = "https://github.com/nikkaushal/roboshop-v1.git"
 
-# dev VPC: 10.20.0.0/24
+# dev VPC: expanded to /16 so AWS CNI can assign IPs from /20 app subnets
+# (t3.xlarge pre-warms up to 60 IPs/node; the old /26 had only 62 usable total)
 network = {
   dev = {
-    vpc_cidr = "10.20.0.0/24"
+    vpc_cidr = "10.20.0.0/16"
     subnets = {
-      public_subnets = ["10.20.0.0/27", "10.20.0.32/27"]
-      app_subnets    = ["10.20.0.64/26", "10.20.0.128/26"]
-      db_subnets     = ["10.20.0.192/27", "10.20.0.224/27"]
+      public_subnets = ["10.20.0.0/24", "10.20.1.0/24"]
+      app_subnets    = ["10.20.16.0/20", "10.20.32.0/20"]
+      db_subnets     = ["10.20.2.0/24", "10.20.3.0/24"]
     }
     az = ["us-east-1a", "us-east-1b"]
   }
