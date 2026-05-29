@@ -128,7 +128,6 @@ module "eks" {
   acm_certificate_arn     = var.acm_certificate_arn
   dns_domain              = var.dns_domain
   dns_zone_id             = var.dns_zone_id
-  eks_version             = var.eks_version
   tags                    = var.tags
 
   depends_on = [module.ec2]

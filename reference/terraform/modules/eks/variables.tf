@@ -54,18 +54,6 @@ variable "acm_certificate_arn" {
   description = "ACM certificate ARN attached to the NLB for TLS termination"
 }
 
-variable "eks_version" {
-  type        = string
-  description = "Kubernetes version for the EKS cluster"
-  default     = "1.31"
-}
-
-variable "app_namespace" {
-  type        = string
-  description = "Kubernetes namespace where RoboShop service accounts run"
-  default     = "roboshop"
-}
-
 variable "tags" {
   type    = map(string)
   default = {}

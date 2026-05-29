@@ -85,7 +85,7 @@ resource "aws_security_group" "cluster_extra" {
 resource "aws_eks_cluster" "main" {
   name     = var.env
   role_arn = aws_iam_role.cluster.arn
-  version  = var.eks_version
+  version  = "1.31"
 
   vpc_config {
     subnet_ids              = var.subnet_ids
@@ -194,11 +194,7 @@ resource "aws_eks_node_group" "main" {
     version = aws_launch_template.node.latest_version
   }
 
-  tags = merge(var.tags, {
-    Name                                                         = "${var.env}-node-group"
-    "k8s.io/cluster-autoscaler/enabled"                          = "true"
-    "k8s.io/cluster-autoscaler/${aws_eks_cluster.main.name}"     = "owned"
-  })
+  tags = merge(var.tags, { Name = "${var.env}-node-group" })
 
   depends_on = [
     aws_iam_role_policy_attachment.node_worker,

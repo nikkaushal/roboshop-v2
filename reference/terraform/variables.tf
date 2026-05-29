@@ -86,12 +86,6 @@ variable "db_instances" {
   }))
 }
 
-variable "eks_version" {
-  type        = string
-  description = "Kubernetes version for the EKS cluster"
-  default     = "1.31"
-}
-
 variable "tags" {
   type    = map(string)
   default = {}
