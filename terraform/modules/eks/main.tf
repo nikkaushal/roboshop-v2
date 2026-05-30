@@ -113,6 +113,14 @@ resource "aws_eks_cluster" "main" {
   depends_on = [aws_iam_role_policy_attachment.cluster]
 }
 
+resource "kubernetes_namespace" "roboshop" {
+  metadata {
+    name = var.app_namespace
+  }
+
+  depends_on = [aws_eks_node_group.main]
+}
+
 resource "aws_eks_addon" "pod_identity" {
   cluster_name  = aws_eks_cluster.main.name
   addon_name    = "eks-pod-identity-agent"
